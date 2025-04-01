@@ -99,6 +99,8 @@ PIP-JSON-PRO节点具有以下特点：
 ## 安装
 
 ```bash
+cd 你的ComfyUI\custom_nodes
+git clone https://github.com/chenpipi0807/PIP-JSON-PRO.git
 pip install jsoncomment demjson3 chardet
 ```
 
