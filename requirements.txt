@@ -1,0 +1,4 @@
+jsoncomment>=0.4.2
+demjson3>=3.0.5
+ast-analyzer>=0.1.0
+chardet>=5.1.0

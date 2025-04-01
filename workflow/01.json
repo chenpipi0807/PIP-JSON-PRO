@@ -1,0 +1,459 @@
+{
+  "last_node_id": 237,
+  "last_link_id": 97,
+  "nodes": [
+    {
+      "id": 230,
+      "type": "PIP_JSON_Extractor_Pro",
+      "pos": [
+        2285.507080078125,
+        3573.97900390625
+      ],
+      "size": [
+        400,
+        320
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "json_text",
+          "label": "json_text",
+          "type": "STRING",
+          "pos": [
+            10,
+            76
+          ],
+          "widget": {
+            "name": "json_text"
+          },
+          "link": 94
+        }
+      ],
+      "outputs": [
+        {
+          "name": "extracted_value",
+          "label": "extracted_value",
+          "type": "STRING",
+          "links": [
+            95
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "success",
+          "label": "success",
+          "type": "BOOLEAN",
+          "links": null,
+          "slot_index": 1
+        },
+        {
+          "name": "debug_info",
+          "label": "debug_info",
+          "type": "STRING",
+          "links": [
+            96
+          ],
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PIP_JSON_Extractor_Pro"
+      },
+      "widgets_values": [
+        "",
+        "精确路径",
+        "analysis",
+        "setting",
+        "",
+        "",
+        "",
+        "0.6",
+        true
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 232,
+      "type": "PIP_JSON_Corrector_Pro",
+      "pos": [
+        2282.779296875,
+        3150.1904296875
+      ],
+      "size": [
+        400,
+        248
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "input_text",
+          "label": "input_text",
+          "type": "STRING",
+          "pos": [
+            10,
+            76
+          ],
+          "widget": {
+            "name": "input_text"
+          },
+          "link": 93
+        }
+      ],
+      "outputs": [
+        {
+          "name": "corrected_json",
+          "label": "corrected_json",
+          "type": "STRING",
+          "links": [
+            94,
+            97
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "is_valid",
+          "label": "is_valid",
+          "type": "BOOLEAN",
+          "links": null
+        },
+        {
+          "name": "debug_info",
+          "label": "debug_info",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PIP_JSON_Corrector_Pro"
+      },
+      "widgets_values": [
+        "",
+        "宽松",
+        true,
+        "4",
+        true,
+        false
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 233,
+      "type": "PIP_JSON_Preview",
+      "pos": [
+        1759.35986328125,
+        3154.125244140625
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "preview_text",
+          "label": "preview_text",
+          "type": "STRING",
+          "links": [
+            92
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "PIP_JSON_Preview"
+      },
+      "widgets_values": [
+        "{\n  \"analysis\": {\n    \"scene_type\": \"single_character\",\n    \"character_type\": \"woman\",\n    \"emotion\": \"confident\",\n    \"setting\": \"indoors\"\n  },\n  \"prompt\": \"1woman, confident expression, hands on hips, standing in a room with soft lighting, indoors, neutral background, detailed, realistic\"\n}",
+        "完整"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 234,
+      "type": "ShowText|pysssss",
+      "pos": [
+        1827.174072265625,
+        3429.604736328125
+      ],
+      "size": [
+        316.2873840332031,
+        226.16493225097656
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "label": "文本",
+          "type": "STRING",
+          "pos": [
+            10,
+            36
+          ],
+          "widget": {
+            "name": "text"
+          },
+          "link": 92
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "label": "字符串",
+          "type": "STRING",
+          "shape": 6,
+          "links": [
+            93
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "",
+        "{\n  \"analysis\": {\n    \"scene_type\": \"single_character\",\n    \"character_type\": \"woman\",\n    \"emotion\": \"confident\",\n    \"setting\": \"indoors\"\n  },\n  \"prompt\": \"1woman, confident expression, hands on hips, standing in a room with soft lighting, indoors, neutral background, detailed, realistic\"\n}"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 235,
+      "type": "ShowText|pysssss",
+      "pos": [
+        2782.216552734375,
+        3552.563720703125
+      ],
+      "size": [
+        373.43121337890625,
+        206.80975341796875
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "label": "文本",
+          "type": "STRING",
+          "pos": [
+            10,
+            36
+          ],
+          "widget": {
+            "name": "text"
+          },
+          "link": 95
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "label": "字符串",
+          "type": "STRING",
+          "shape": 6,
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss",
+        "ttNbgOverride": {
+          "color": "#332922",
+          "bgcolor": "#593930",
+          "groupcolor": "#b06634"
+        }
+      },
+      "widgets_values": [
+        "",
+        "indoors"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 236,
+      "type": "ShowText|pysssss",
+      "pos": [
+        2778.794677734375,
+        3844.4970703125
+      ],
+      "size": [
+        318.8621826171875,
+        203.85003662109375
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "label": "文本",
+          "type": "STRING",
+          "pos": [
+            10,
+            36
+          ],
+          "widget": {
+            "name": "text"
+          },
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "label": "字符串",
+          "type": "STRING",
+          "shape": 6,
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss",
+        "ttNbgOverride": {
+          "color": "#332922",
+          "bgcolor": "#593930",
+          "groupcolor": "#b06634"
+        }
+      },
+      "widgets_values": [
+        "",
+        "查询路径: analysis->setting\n搜索模式: 精确路径\n匹配结果:\n  ✓ 精确匹配: analysis.setting"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 237,
+      "type": "ShowText|pysssss",
+      "pos": [
+        2760.362548828125,
+        3125.48974609375
+      ],
+      "size": [
+        342.987548828125,
+        274.7796325683594
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "label": "文本",
+          "type": "STRING",
+          "pos": [
+            10,
+            36
+          ],
+          "widget": {
+            "name": "text"
+          },
+          "link": 97
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "label": "字符串",
+          "type": "STRING",
+          "shape": 6,
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss",
+        "ttNbgOverride": {
+          "color": "#332922",
+          "bgcolor": "#593930",
+          "groupcolor": "#b06634"
+        }
+      },
+      "widgets_values": [
+        "",
+        "{\n    \"analysis\": {\n        \"character_type\": \"woman\",\n        \"emotion\": \"confident\",\n        \"scene_type\": \"single_character\",\n        \"setting\": \"indoors\"\n    },\n    \"prompt\": \"1woman, confident expression, hands on hips, standing in a room with soft lighting, indoors, neutral background, detailed, realistic\"\n}"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    }
+  ],
+  "links": [
+    [
+      92,
+      233,
+      0,
+      234,
+      0,
+      "STRING"
+    ],
+    [
+      93,
+      234,
+      0,
+      232,
+      0,
+      "STRING"
+    ],
+    [
+      94,
+      232,
+      0,
+      230,
+      0,
+      "STRING"
+    ],
+    [
+      95,
+      230,
+      0,
+      235,
+      0,
+      "STRING"
+    ],
+    [
+      96,
+      230,
+      2,
+      236,
+      0,
+      "STRING"
+    ],
+    [
+      97,
+      232,
+      0,
+      237,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.1671841070450033,
+      "offset": [
+        -1512.7184416690495,
+        -3076.784190570408
+      ]
+    },
+    "ue_links": [],
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
