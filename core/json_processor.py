@@ -1,5 +1,6 @@
 import json
 import ast
+import re
 import demjson3
 from jsoncomment import JsonComment
 from typing import Tuple, Dict, Any, Optional, Union
@@ -11,7 +12,7 @@ from ..utils.json_utils import (
 
 
 class JSONProcessor:
-    """u5904u7406u5404u7c7bu4f2aJSONu683cu5f0fu7684u6838u5fc3u5904u7406u5668u7c7b"""
+    """处理各类伪JSON格式的核心处理器类"""
     
     def __init__(self):
         self.parser = JsonComment()
@@ -23,36 +24,41 @@ class JSONProcessor:
                indent: int = 2,
                pretty_print: bool = True,
                sort_keys: bool = False) -> Tuple[str, bool, Dict[str, Any]]:
-        """u5904u7406JSONu6587u672c
+        """处理JSON文本
         
         Args:
-            input_text: u8f93u5165u7684JSONu6587u672c
-            repair_level: u4feeu590du7ea7u522b (1=u57fau7840, 2=u6807u51c6, 3=u9ad8u7ea7)
-            indent: u7f29u8fdbu7a7au683cu6570
-            pretty_print: u662fu5426u7f8eu5316u8f93u51fa
-            sort_keys: u662fu5426u6309u952eu6392u5e8f
+            input_text: 输入的JSON文本
+            repair_level: 修复级别 (1=基础, 2=标准, 3=高级)
+            indent: 缩进空格数
+            pretty_print: 是否美化输出
+            sort_keys: 是否按键排序
             
         Returns:
-            u5904u7406u540eu7684JSONu5b57u7b26u4e32, u662fu5426u6210u529f, u8c03u8bd5u4fe1u606f
+            处理后的JSON字符串, 是否成功, 调试信息
         """
         if not input_text or not input_text.strip():
-            return "", False, {"error": "u7a7au8f93u5165"}
+            return "", False, {"error": "空输入"}
             
-        # u8bb0u5f55u539fu59cbu8f93u5165
+        # 记录原始输入
         self.debug_info = {
             "original_length": len(input_text),
             "original_preview": input_text[:100] + ("..." if len(input_text) > 100 else ""),
             "repair_methods": []
         }
         
-        # u5c1du8bd5u5404u79cdu4feeu590du65b9u6cd5
-        result, success = self._try_repair_methods(input_text, repair_level)
+        # 首先尝试提取JSON内容
+        extracted_text = self._extract_json_content(input_text)
+        if extracted_text != input_text:
+            self.debug_info["repair_methods"].append("json_extraction")
         
-        # u7f8eu5316u683cu5f0fu5316
+        # 尝试各种修复方法
+        result, success = self._try_repair_methods(extracted_text, repair_level)
+        
+        # 美化格式化
         if success and pretty_print:
             result = apply_format_style(result, indent, sort_keys)
             
-        # u8bb0u5f55u7ed3u679cu4fe1u606f
+        # 记录结果信息
         self.debug_info.update({
             "success": success,
             "final_length": len(result),
@@ -61,8 +67,67 @@ class JSONProcessor:
         
         return result, success, self.debug_info
     
+    def _extract_json_content(self, text: str) -> str:
+        """从文本中提取JSON内容"""
+        # 方法1: 提取markdown代码块中的JSON
+        json_from_markdown = self._extract_from_markdown(text)
+        if json_from_markdown:
+            return json_from_markdown
+        
+        # 方法2: 查找第一个完整的JSON对象或数组
+        json_from_braces = self._extract_from_braces(text)
+        if json_from_braces:
+            return json_from_braces
+        
+        # 方法3: 如果都没找到，返回原文本
+        return text.strip()
+    
+    def _extract_from_markdown(self, text: str) -> Optional[str]:
+        """从markdown代码块中提取JSON"""
+        # 匹配 ```json ... ``` 格式
+        json_pattern = r'```(?:json)?\s*\n?(.*?)\n?```'
+        matches = re.findall(json_pattern, text, re.DOTALL | re.IGNORECASE)
+        
+        if matches:
+            # 返回第一个匹配的内容
+            return matches[0].strip()
+        
+        return None
+    
+    def _extract_from_braces(self, text: str) -> Optional[str]:
+        """通过大括号或方括号提取JSON内容"""
+        text = text.strip()
+        
+        # 查找对象 {...}
+        if '{' in text:
+            start_idx = text.find('{')
+            if start_idx != -1:
+                brace_count = 0
+                for i, char in enumerate(text[start_idx:], start_idx):
+                    if char == '{':
+                        brace_count += 1
+                    elif char == '}':
+                        brace_count -= 1
+                        if brace_count == 0:
+                            return text[start_idx:i+1]
+        
+        # 查找数组 [...]
+        if '[' in text:
+            start_idx = text.find('[')
+            if start_idx != -1:
+                bracket_count = 0
+                for i, char in enumerate(text[start_idx:], start_idx):
+                    if char == '[':
+                        bracket_count += 1
+                    elif char == ']':
+                        bracket_count -= 1
+                        if bracket_count == 0:
+                            return text[start_idx:i+1]
+        
+        return None
+    
     def _try_repair_methods(self, text: str, repair_level: int) -> Tuple[str, bool]:
-        """u6309u987au5e8fu5c1du8bd5u4e0du540cu7684u4feeu590du65b9u6cd5"""
+        """按照顺序尝试各种修复方法"""
         methods = [
             self._try_direct_parse,
             self._try_normalize,
@@ -71,8 +136,8 @@ class JSONProcessor:
             self._try_ast_eval
         ]
         
-        # u6839u636eu4feeu590du7ea7u522bu9650u5236u5c1du8bd5u7684u65b9u6cd5
-        methods_to_try = methods[:1 + repair_level]  # u81f3u5c11u5c1du8bd5u76f4u63a5u89e3u6790
+        # 根据修复级别选择尝试的方法
+        methods_to_try = methods[:1 + repair_level]  # 至少尝试直接解析
         
         for method in methods_to_try:
             try:
@@ -81,14 +146,14 @@ class JSONProcessor:
                     self.debug_info["repair_methods"].append(method.__name__)
                     return result, True
             except Exception as e:
-                # u8bb0u5f55u9519u8befu4f46u7ee7u7eedu5c1du8bd5
+                # 记录异常信息
                 pass
         
-        # u6240u6709u65b9u6cd5u90fdu5931u8d25
+        # 所有方法都尝试失败
         return text, False
     
     def _try_direct_parse(self, text: str) -> Tuple[str, bool]:
-        """u5c1du8bd5u76f4u63a5u89e3u6790JSON"""
+        """尝试直接解析JSON"""
         try:
             parsed = json.loads(text)
             return json.dumps(parsed, ensure_ascii=False), True
@@ -96,31 +161,31 @@ class JSONProcessor:
             raise Exception("Direct parse failed")
     
     def _try_normalize(self, text: str) -> Tuple[str, bool]:
-        """u4f7fu7528u89c4u8303u5316u51fdu6570u5c1du8bd5u4feeu590d"""
+        """尝试使用normalize_json修复JSON"""
         normalized, success = normalize_json(text, repair_level=3)
         if not success:
             raise Exception("Normalize failed")
         return normalized, True
     
     def _try_jsoncomment(self, text: str) -> Tuple[str, bool]:
-        """u5c1du8bd5u4f7fu7528JsonCommentu89e3u6790"""
+        """尝试使用JsonComment解析JSON"""
         parsed = self.parser.loads(text)
         return json.dumps(parsed, ensure_ascii=False), True
     
     def _try_demjson(self, text: str) -> Tuple[str, bool]:
-        """u5c1du8bd5u4f7fu7528demjsonu89e3u6790"""
+        """尝试使用demjson解析JSON"""
         parsed = demjson3.decode(text)
         return json.dumps(parsed, ensure_ascii=False), True
     
     def _try_ast_eval(self, text: str) -> Tuple[str, bool]:
-        """u5c1du8bd5u4f7fu7528Python ASTu8bc4u4f30"""
-        # u6dfbu52a0u5916u5c42u82b1u62ecu53f7uff0cu5982u679cu4e0du5b58u5728
+        """尝试使用Python AST解析JSON"""
+        # 尝试添加外层大括号
         if not text.strip().startswith('{') and not text.strip().startswith('['):
             text = '{' + text + '}'
         
-        # u5c1du8bd5u5c06u6240u6709u4e0du7b26u5408JSONu7684u5355u5f15u53f7u66ffu6362u4e3au53ccu5f15u53f7
+        # 尝试替换单引号为双引号
         text = text.replace("'", '"')
         
-        # u5c1du8bd5u4f7fu7528ast.literal_evalu89e3u6790
+        # 尝试使用ast.literal_eval解析
         parsed = ast.literal_eval(text)
         return json.dumps(parsed, ensure_ascii=False), True
